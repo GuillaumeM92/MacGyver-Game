@@ -1,6 +1,5 @@
 # Importing libraries
 import pygame
-from pygame.locals import *
 
 # Initializing pygame
 pygame.init()
@@ -12,86 +11,81 @@ screen = pygame.display.set_mode((width, height))
 # Initializing 4 keys
 keys = [False, False, False, False]
 
-# Player Position
-x_pos = 5
-y_pos = 445
-player_position = [x_pos, y_pos]
-
 # Loading images
-player = pygame.image.load \
-    ("C:/Users/Guillaume/PycharmProjects/MacGyver OPC Game/macgyver_resources/resource/MacGyver_Low.png").convert()
-background_tile = pygame.image.load \
-    ("C:/Users/Guillaume/PycharmProjects/MacGyver OPC Game/macgyver_resources/resource/Background_tile_40x40.png").convert()
+player_img = pygame.image.load("C:/Users/Guillaume/PycharmProjects/MacGyver OPC Game/macgyver_resources/resource/MacGyver_22.png").convert_alpha()
+background_tile = pygame.image.load("C:/Users/Guillaume/PycharmProjects/MacGyver OPC Game/macgyver_resources/resource/Background_tile_40x40.png").convert()
+north_wall_img = pygame.image.load ("C:/Users/Guillaume/PycharmProjects/MacGyver OPC Game/macgyver_resources/resource/North_Wall.png").convert()
+south_wall_img = pygame.image.load ("C:/Users/Guillaume/PycharmProjects/MacGyver OPC Game/macgyver_resources/resource/South_Wall.png").convert()
+west_wall_img = pygame.image.load ("C:/Users/Guillaume/PycharmProjects/MacGyver OPC Game/macgyver_resources/resource/West_Wall.png").convert()
+east_wall_img = pygame.image.load ("C:/Users/Guillaume/PycharmProjects/MacGyver OPC Game/macgyver_resources/resource/East_Wall.png").convert()
 
-# Idle Loop
-while 1:
+# Defining the walls
+north_wall = pygame.Rect(0,0,640,8)
+south_wall = pygame.Rect(0,472,640,8)
+west_wall = pygame.Rect(0,0,8,480)
+east_wall = pygame.Rect(632,40,8,440)
 
-    # Drawing the screen
-    screen.fill(0)
-    
-    # Drawing the background
+
+# Creating a player class
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = player_img
+        self.x_pos, self.y_pos = 10, 448
+        self.rect = (self.x_pos, self.y_pos, 16, 22)
+
+# Defining player's updating method
+    def update(self):
+        keystate = pygame.key.get_pressed()
+        if keystate[pygame.K_LEFT]:
+            self.x_pos -= .2
+            self.rect = (self.x_pos - .2, self.y_pos, 16, 22)
+        if keystate[pygame.K_RIGHT]:
+            self.x_pos += .2
+            self.rect = (self.x_pos + .2, self.y_pos, 16, 22)
+        if keystate[pygame.K_UP]:
+            self.y_pos -= .2
+            self.rect = (self.x_pos, self.y_pos - .2, 16, 22)
+        if keystate[pygame.K_DOWN]:
+            self.y_pos += .2
+            self.rect = (self.x_pos, self.y_pos + .2, 16, 22)
+
+
+# Creating the sprites list and adding the player to it
+all_sprites = pygame.sprite.Group()
+player = Player()
+all_sprites.add(player)
+
+# looping the game
+running = True
+while running:
+
+    # checking for events
+    for event in pygame.event.get():
+
+        # checking for quitting event
+        if event.type == pygame.QUIT:
+            running = False
+
+    # updating sprites
+    all_sprites.update()
+
+    # drawing the background
     for x in range(40):
         for y in range(40):
-            screen.blit(background_tile, (x*40, y*40))
-            
-    # Drawing the player
-    screen.blit(player, player_position)
-    
-    # Updating the screen
+            screen.blit(background_tile, (x * 40, y * 40))
+
+    # Drawing the walls
+    screen.blit(north_wall_img, north_wall)
+    screen.blit(south_wall_img, south_wall)
+    screen.blit(west_wall_img, west_wall)
+    screen.blit(east_wall_img, east_wall)
+
+    # drawing the sprites
+    all_sprites.draw(screen)
+
+    # flipping the display
     pygame.display.flip()
-    
-    # Looping through the events
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == K_UP:
-                keys[0] = True
-            elif event.key == K_LEFT:
-                keys[1] = True
-            elif event.key == K_DOWN:
-                keys[2] = True
-            elif event.key == K_RIGHT:
-                keys[3] = True
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP:
-                keys[0] = False
-            elif event.key == pygame.K_LEFT:
-                keys[1] = False
-            elif event.key == pygame.K_DOWN:
-                keys[2] = False
-            elif event.key == pygame.K_RIGHT:
-                keys[3] = False
 
-    # Moving player
-    player_position = [x_pos, y_pos]
-    if keys[0]:
-        y_pos -= .2
-    elif keys[2]:
-        y_pos += .2
-    if keys[1]:
-        x_pos -= .2
-    elif keys[3]:
-        x_pos += .2
-
-
-'''# Initializing all the squares for the 15x12 grid
-squares = list(range(180))
-
-# Splitting the squares into 12 rows of 15 squares each (except the first row)
-row_00 = squares[0:16]
-row_01 = squares[16:31]
-row_02 = squares[31:46]
-row_03 = squares[46:61]
-row_04 = squares[61:75]
-row_05 = squares[75:90]
-row_06 = squares[90:105]
-row_07 = squares[105:120]
-row_08 = squares[120:135]
-row_09 = squares[135:150]
-row_10 = squares[150:165]
-row_11 = squares[165:180]
-
-# Building the grid
-grid = [row_00, row_01, row_02, row_03, row_04, row_05, row_06, row_07, row_08,
-        row_09, row_10, row_11]'''
+# quitting
+pygame.quit()
