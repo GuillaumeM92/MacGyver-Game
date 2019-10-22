@@ -1,8 +1,7 @@
 """
 
-Grille de 192 carrés, 16 sur la longueur et 12 sur la hauteur. La dernière colonne est noire (sortie).
-Le départ pour MacGyver est en bas à gauche, la sortie en haut a droite.
+Labyrinthe = carré de 15x15, soit 225 cases. MacGyver commence en haut à gauche et doit rejoindre la sortie en bas à droite.
 
-La résolution est de 640x480, le sol est donc composé de carrés de 40x40 pixels.
+La résolution est de 600x600, les cases font 40x40 pixels.
 
 """
