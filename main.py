@@ -8,27 +8,31 @@ pygame.key.set_repeat(delay, interval)
 
 # Define variables
 running = 1
-needle_check = 1
+syringe_check = 1
 ether_check = 0
 sunglasses_check = 0
 
 draw_ether = 1
 draw_sunglasses = 1
-draw_needle = 1
+draw_syringe = 1
 
 picked_up_ether = 0
 picked_up_sunglasses = 0
-picked_up_needle = 0
+picked_up_syringe = 0
+
+picked_up_ether_and_syringe = 0
+crafted_ether_syringe = 0
 
 j = 0
 k = 0
-win = 0
+you_win = 0
+you_lose = 0
 
 # Game main loop
 while running:
 
     # Limit the game's hardware resource consumption
-    pygame.time.Clock().tick(30)
+    pygame.time.Clock().tick(60)
 
     # Define player and sentinel starting position
     player_position = player_r.get_rect(topleft=(k * 40, j * 40))
@@ -41,11 +45,11 @@ while running:
         if event.type == QUIT:
             running = 0
 
-        # One in four chance to trigger the sentinel orientation change, whenever an arrow key is pressed
+        # One in ten chance to trigger the sentinel orientation change, whenever a key is pressed
         elif event.type == KEYDOWN:
-            one_in_four = random.choice(['a', 'b', 'c', 'd'])
+            one_in_ten = random.choice(range(10))
 
-            if one_in_four != 'd':
+            if one_in_ten == 9:
                 sentinel_orientation = sentinel_r
             else:
                 sentinel_orientation = sentinel_l
@@ -77,15 +81,6 @@ while running:
             if grid[j][k] == "1":
                 k -= 1
 
-        # Win condition
-        if player_position == sentinel_position and win == 0:
-            print("you loose, missing items")
-
-        if draw_needle == 0 and draw_sunglasses == 0 and draw_ether == 0:
-            win = 1
-            if player_position == sentinel_position and win == 1:
-                print("you win")
-
     # Tile the background image
     for a in range(15):
         for b in range(15):
@@ -110,23 +105,23 @@ while running:
                 x += 1
 
     # Loop until all 3 items are placed correctly (not in walls)
-    while needle_check:
+    while syringe_check:
         # Randomly choose items position
-        random_number_1 = random.randrange(15)
-        random_number_2 = random.randrange(15)
-        needle_random_x_position = random_number_1 * 40
-        needle_random_y_position = random_number_2 * 40
+        random_number_1 = random.randrange(1, 15)
+        random_number_2 = random.randrange(1, 14)
+        syringe_random_x_position = random_number_1 * 40
+        syringe_random_y_position = random_number_2 * 40
         # Draw item if not in wall
         if grid[random_number_2][random_number_1] != "1":
-            needle_position = needle.get_rect(topleft=(needle_random_x_position, needle_random_y_position))
+            syringe_position = syringe.get_rect(topleft=(syringe_random_x_position, syringe_random_y_position))
             # Proceed to the next while loop if first loop condition is satisfied
             ether_check += 1
-            needle_check = 0
+            syringe_check = 0
 
     while ether_check:
 
-        random_number_3 = random.randrange(15)
-        random_number_4 = random.randrange(15)
+        random_number_3 = random.randrange(1, 15)
+        random_number_4 = random.randrange(1, 14)
         ether_random_x_position = random_number_3 * 40
         ether_random_y_position = random_number_4 * 40
 
@@ -137,8 +132,8 @@ while running:
 
     while sunglasses_check:
 
-        random_number_5 = random.randrange(15)
-        random_number_6 = random.randrange(15)
+        random_number_5 = random.randrange(1, 15)
+        random_number_6 = random.randrange(1, 14)
         sunglasses_random_x_position = random_number_5 * 40
         sunglasses_random_y_position = random_number_6 * 40
 
@@ -149,64 +144,44 @@ while running:
 
     # Make sure all 3 items are not on top of each other
     if (random_number_1 + random_number_2) == (random_number_3 + random_number_4):
-        needle_check = 1
+        syringe_check = 1
     if (random_number_1 + random_number_2) == (random_number_5 + random_number_6):
-        needle_check = 1
+        syringe_check = 1
     if (random_number_3 + random_number_4) == (random_number_5 + random_number_6):
-        needle_check = 1
+        syringe_check = 1
 
-    # Make sure all 3 items are not on top of the player starting location
-    if (random_number_1 + random_number_2) == 0:
-        needle_check = 1
-    if (random_number_3 + random_number_4) == 0:
-        needle_check = 1
-    if (random_number_5 + random_number_6) == 0:
-        needle_check = 1
+    # Make sure all 3 items are not on top of the laser grid
+    if (random_number_1 + random_number_2) == 24:
+        syringe_check = 1
+    if (random_number_3 + random_number_4) == 24:
+        syringe_check = 1
+    if (random_number_5 + random_number_6) == 24:
+        syringe_check = 1
 
-    # Make sure all 3 items are not on top of the sentinel location
-    if (random_number_1 * random_number_2) == 196:
-        needle_check = 1
-    if (random_number_3 * random_number_4) == 196:
-        needle_check = 1
-    if (random_number_5 * random_number_6) == 196:
-        needle_check = 1
-
-    # Draw items images
-    if draw_ether == 1:
-        screen.blit(ether, ether_position)
-    if draw_sunglasses == 1:
-        screen.blit(sunglasses, sunglasses_position)
-    if draw_needle == 1:
-        screen.blit(needle, needle_position)
-
-    # Stop drawing the items if the player stepped on them
-    if player_position == ether_position and draw_ether == 1:
+    # Stop drawing the items if the player stepped on them, and display item pickup text
+    if player_position == ether_position and picked_up_ether == 0:
         ether_text_position = pygame.Rect(0, 0, 600, 600)
         screen.blit(ether_text, ether_text_position)
-
-    if player_position == ether_position:
         draw_ether = 0
-        # Draw ether text
-        ether_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(ether_text, ether_text_position)
-    if event.type == KEYDOWN:
+    # Make sure to only print the item pickup text once
+    if player_position != ether_position and draw_ether == 0:
         picked_up_ether = 1
 
-    if player_position == sunglasses_position:
-        draw_sunglasses = 0
-        # Draw sunglasses text
+    # Stop drawing the items if the player stepped on them, and display item pickup text
+    if player_position == sunglasses_position and picked_up_sunglasses == 0:
         sunglasses_text_position = pygame.Rect(0, 0, 600, 600)
         screen.blit(sunglasses_text, sunglasses_text_position)
-        """"if event in pygame.event.get():
-            picked_up_sunglasses = 1"""
+        draw_sunglasses = 0
+    if player_position != sunglasses_position and draw_sunglasses == 0:
+        picked_up_sunglasses = 1
 
-    if player_position == needle_position and picked_up_needle == 0:
-        draw_needle = 0
-        # Draw needle text once
-        needle_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(needle_text, needle_text_position)
-        """"if event in pygame.event.get():
-            picked_up_needle = 1"""
+    # Stop drawing the items if the player stepped on them, and display item pickup text
+    if player_position == syringe_position and picked_up_syringe == 0:
+        syringe_text_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(syringe_text, syringe_text_position)
+        draw_syringe = 0
+    if player_position != syringe_position and draw_syringe == 0:
+        picked_up_syringe = 1
 
     # Draw the player and it's orientation, and update the model if the player picked up the sunglasses
     if draw_sunglasses == 1:
@@ -216,6 +191,77 @@ while running:
 
     # Draw the sentinel and update it's orientation (random)
     screen.blit(sentinel_orientation, sentinel_position)
+
+    # Draw items images
+    if draw_ether == 1:
+        screen.blit(ether, ether_position)
+    if draw_sunglasses == 1:
+        screen.blit(sunglasses, sunglasses_position)
+    if draw_syringe == 1:
+        screen.blit(syringe, syringe_position)
+
+    # Draw inventory
+    if picked_up_ether or picked_up_sunglasses or picked_up_syringe == 1:
+        inventory_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(inventory, inventory_position)
+
+    if picked_up_ether == 1 and crafted_ether_syringe == 0:
+        ether_inv_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(ether_inv, ether_inv_position)
+
+    if picked_up_sunglasses == 1:
+        sunglasses_inv_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(sunglasses_inv, sunglasses_inv_position)
+
+    if picked_up_syringe == 1 and crafted_ether_syringe == 0:
+        syringe_inv_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(syringe_inv, syringe_inv_position)
+
+    if picked_up_ether and picked_up_syringe == 1 and picked_up_ether_and_syringe == 0:
+        craft_ether_syringe_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(craft_ether_syringe_text, craft_ether_syringe_position)
+        if event.type == KEYDOWN and event.key == K_f:
+            picked_up_ether_and_syringe = 1
+
+    if picked_up_ether_and_syringe == 1:
+        crafted_ether_syringe = 1
+        ether_syringe_inv_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(ether_syringe_inv, ether_syringe_inv_position)
+
+    # Draw laser grid
+    laser_grid_position = pygame.Rect(440, 520, 40, 40)
+    screen.blit(laser_grid, laser_grid_position)
+
+    if player_position == laser_grid_position and picked_up_sunglasses == 1:
+        sunglasses_laser_grid_text_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(sunglasses_laser_grid_text, sunglasses_laser_grid_text_position)
+
+    # Lose condition
+    if player_position == sentinel_position and you_win == 0:
+        you_lose = 1
+    if player_position == laser_grid_position and picked_up_sunglasses == 0:
+        you_lose = 2
+
+    if you_lose == 1:
+        you_lose_text_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(you_lose_text, you_lose_text_position)
+        if you_lose == 1 and event.type == KEYDOWN and event.key == K_x:
+            running = 0
+    if you_lose == 2:
+        you_lose_2_text_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(you_lose_2_text, you_lose_2_text_position)
+        if you_lose == 2 and event.type == KEYDOWN and event.key == K_x:
+            running = 0
+
+    # Win condition
+    if player_position == sentinel_position and crafted_ether_syringe and picked_up_sunglasses == 1:
+        you_win = 1
+
+    if you_win == 1:
+        you_win_text_position = pygame.Rect(0, 0, 600, 600)
+        screen.blit(you_win_text, you_win_text_position)
+        if you_win == 1 and event.type == KEYDOWN and event.key == K_x:
+            running = 0
 
     # Update the display
     pygame.display.flip()
