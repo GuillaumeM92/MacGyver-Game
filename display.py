@@ -1,17 +1,17 @@
 # Import pygame
 import pygame
 from pygame.locals import *
+from variables import *
 
 # Initialize pygame
 pygame.init()
 
+# Enable key holding
+pygame.key.set_repeat(delay, interval)
+
 # Screen_resolution
 screen_width = 600
 screen_height = 600
-
-# Key holding repeat behaviour
-delay = 100
-interval = 300
 
 # Set screen resolution
 screen = pygame.display.set_mode((screen_width, screen_height), FULLSCREEN)
