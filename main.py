@@ -1,6 +1,6 @@
 # Import libraries
 from display import *
-from labyrinth_square_grid import *
+from labyrinth_grid import *
 import random
 
 # Game main loop
