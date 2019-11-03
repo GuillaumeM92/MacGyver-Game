@@ -37,15 +37,15 @@ syringe = pygame.image.load("macgyver_resources/resource/Items/syringe.png").con
 ether = pygame.image.load("macgyver_resources/resource/Items/ether.png").convert_alpha()
 sunglasses = pygame.image.load("macgyver_resources/resource/Items/sunglasses.png").convert_alpha()
 
-ether_text = pygame.image.load("macgyver_resources/resource/Text/EN/ether_text.png").convert_alpha()
-sunglasses_text = pygame.image.load("macgyver_resources/resource/Text/EN/sunglasses_text.png").convert_alpha()
-syringe_text = pygame.image.load("macgyver_resources/resource/Text/EN/syringe_text.png").convert_alpha()
-craft_ether_syringe_text = pygame.image.load("macgyver_resources/resource/Text/EN/craft_ether_syringe_text.png").convert_alpha()
+ether_text = pygame.image.load("macgyver_resources/resource/Text/FR/ether_text.png").convert_alpha()
+sunglasses_text = pygame.image.load("macgyver_resources/resource/Text/FR/sunglasses_text.png").convert_alpha()
+syringe_text = pygame.image.load("macgyver_resources/resource/Text/FR/syringe_text.png").convert_alpha()
+craft_ether_syringe_text = pygame.image.load("macgyver_resources/resource/Text/FR/craft_ether_syringe_text.png").convert_alpha()
 
-you_win_text = pygame.image.load("macgyver_resources/resource/Text/EN/you_win_text.png").convert()
-you_lose_text = pygame.image.load("macgyver_resources/resource/Text/EN/you_lose_text.png").convert()
-you_lose_2_text = pygame.image.load("macgyver_resources/resource/Text/EN/you_lose_2_text.png").convert()
-sunglasses_laser_grid_text = pygame.image.load("macgyver_resources/resource/Text/EN/sunglasses_laser_grid_text.png").convert_alpha()
+you_win_text = pygame.image.load("macgyver_resources/resource/Text/FR/you_win_text.png").convert()
+you_lose_text = pygame.image.load("macgyver_resources/resource/Text/FR/you_lose_text.png").convert()
+you_lose_2_text = pygame.image.load("macgyver_resources/resource/Text/FR/you_lose_2_text.png").convert()
+sunglasses_laser_grid_text = pygame.image.load("macgyver_resources/resource/Text/FR/sunglasses_laser_grid_text.png").convert_alpha()
 
 inventory = pygame.image.load("macgyver_resources/resource/Inventory/inventory.png").convert_alpha()
 ether_inv = pygame.image.load("macgyver_resources/resource/Inventory/ether_inv.png").convert_alpha()
