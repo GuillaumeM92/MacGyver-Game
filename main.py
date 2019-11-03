@@ -2,6 +2,10 @@
 from display import *
 from labyrinth_grid import *
 import random
+from player import *
+from functions import *
+
+player = Player()
 
 # Game main loop
 while running:
@@ -10,8 +14,14 @@ while running:
     pygame.time.Clock().tick(60)
 
     # Define player and sentinel starting position
-    player_position = player_r.get_rect(topleft=(k * 40, j * 40))
+    player_position = player_r.get_rect(topleft=(player.position()))
     sentinel_position = sentinel_l.get_rect(topleft=(560, 560))
+
+    # Draw the background
+    draw_background()
+
+    # Draw the walls
+    draw_walls()
 
     # Check for any event
     for event in pygame.event.get():
@@ -30,54 +40,19 @@ while running:
                 sentinel_orientation = sentinel_l
 
             # Move the player when arrow keys are pressed
-            if event.key == K_UP and j != 0:
-                j -= 1
-                if grid[j][k] == "1":
-                    j += 1
-
-            if event.key == K_DOWN and j != 14:
-                j += 1
-                if grid[j][k] == "1":
-                    j -= 1
-
-            if event.key == K_LEFT and k != 0:
-                player_orientation = player_l
-                k -= 1
-                if draw_sunglasses == 0:
-                    player_orientation = classy_player_orientation = player_classy_l
-            if grid[j][k] == "1":
-                k += 1
-
-            if event.key == K_RIGHT and k != 14:
-                player_orientation = player_r
-                k += 1
-                if draw_sunglasses == 0:
-                    player_orientation = classy_player_orientation = player_classy_r
-            if grid[j][k] == "1":
-                k -= 1
-
-    # Tile the background image
-    for a in range(15):
-        for b in range(15):
-            screen.blit(background_tile, (a * 40, b * 40))
-
-    # Draw the walls on top of the background wherever it matches with the layout in labyrinth_square_grid.py
-    x = 0
-    y = 0
-
-    for n in range(15*15):
-        if grid[x][y] == "0":
-            y += 1
-            if y == 15:
-                y = 0
-                x += 1
-
-        elif grid[x][y] != "0":
-            screen.blit(wall_tile, (y * 40, x * 40))
-            y += 1
-            if y == 15:
-                y = 0
-                x += 1
+            if event.type == KEYDOWN:
+                if event.key == K_UP:
+                    player.move("up")
+                if event.key == K_DOWN:
+                    player.move("down")
+                if event.key == K_LEFT:
+                    player.move("left")
+                    player_orientation = player_l
+                    classy_player_orientation = player_classy_l
+                if event.key == K_RIGHT:
+                    player.move("right")
+                    player_orientation = player_r
+                    classy_player_orientation = player_classy_r
 
     # Loop until all 3 items are placed correctly (not in walls)
     while syringe_check:
@@ -136,80 +111,78 @@ while running:
     # Stop drawing the items if the player stepped on them, and display item pickup text
     if player_position == ether_position and picked_up_ether == 0:
         ether_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(ether_text, ether_text_position)
+        draw(ether_text, ether_text_position)
         draw_ether = 0
     # Make sure to only print the item pickup text once
     if player_position != ether_position and draw_ether == 0:
         picked_up_ether = 1
 
-    # Stop drawing the items if the player stepped on them, and display item pickup text
     if player_position == sunglasses_position and picked_up_sunglasses == 0:
         sunglasses_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(sunglasses_text, sunglasses_text_position)
+        draw(sunglasses_text, sunglasses_text_position)
         draw_sunglasses = 0
     if player_position != sunglasses_position and draw_sunglasses == 0:
         picked_up_sunglasses = 1
 
-    # Stop drawing the items if the player stepped on them, and display item pickup text
     if player_position == syringe_position and picked_up_syringe == 0:
         syringe_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(syringe_text, syringe_text_position)
+        draw(syringe_text, syringe_text_position)
         draw_syringe = 0
     if player_position != syringe_position and draw_syringe == 0:
         picked_up_syringe = 1
 
     # Draw the player and it's orientation, and update the model if the player picked up the sunglasses
     if draw_sunglasses == 1:
-        screen.blit(player_orientation, player_position)
+        draw(player_orientation, player_position)
     else:
-        screen.blit(classy_player_orientation, player_position)
+        draw(classy_player_orientation, player_position)
 
     # Draw the sentinel and update it's orientation (random)
-    screen.blit(sentinel_orientation, sentinel_position)
+    draw(sentinel_orientation, sentinel_position)
 
     # Draw items images
     if draw_ether == 1:
-        screen.blit(ether, ether_position)
+        draw(ether, ether_position)
     if draw_sunglasses == 1:
-        screen.blit(sunglasses, sunglasses_position)
+        draw(sunglasses, sunglasses_position)
     if draw_syringe == 1:
-        screen.blit(syringe, syringe_position)
+        draw(syringe, syringe_position)
 
     # Draw inventory
     if picked_up_ether or picked_up_sunglasses or picked_up_syringe == 1:
         inventory_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(inventory, inventory_position)
+        draw(inventory, inventory_position)
 
     if picked_up_ether == 1 and crafted_ether_syringe == 0:
         ether_inv_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(ether_inv, ether_inv_position)
+        draw(ether_inv, ether_inv_position)
 
     if picked_up_sunglasses == 1:
         sunglasses_inv_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(sunglasses_inv, sunglasses_inv_position)
+        draw(sunglasses_inv, sunglasses_inv_position)
 
     if picked_up_syringe == 1 and crafted_ether_syringe == 0:
         syringe_inv_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(syringe_inv, syringe_inv_position)
+        draw(syringe_inv, syringe_inv_position)
 
     if picked_up_ether and picked_up_syringe == 1 and picked_up_ether_and_syringe == 0:
         craft_ether_syringe_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(craft_ether_syringe_text, craft_ether_syringe_position)
+        draw(craft_ether_syringe_text, craft_ether_syringe_position)
         if event.type == KEYDOWN and event.key == K_f:
             picked_up_ether_and_syringe = 1
 
     if picked_up_ether_and_syringe == 1:
         crafted_ether_syringe = 1
         ether_syringe_inv_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(ether_syringe_inv, ether_syringe_inv_position)
+        draw(ether_syringe_inv, ether_syringe_inv_position)
 
     # Draw laser grid
     laser_grid_position = pygame.Rect(440, 520, 40, 40)
-    screen.blit(laser_grid, laser_grid_position)
+    draw(laser_grid, laser_grid_position)
 
     if player_position == laser_grid_position and picked_up_sunglasses == 1:
         sunglasses_laser_grid_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(sunglasses_laser_grid_text, sunglasses_laser_grid_text_position)
+        draw(sunglasses_laser_grid_text, sunglasses_laser_grid_text_position)
 
     # Lose condition
     if player_position == sentinel_position and you_win == 0:
@@ -219,12 +192,12 @@ while running:
 
     if you_lose == 1:
         you_lose_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(you_lose_text, you_lose_text_position)
+        draw(you_lose_text, you_lose_text_position)
         if you_lose == 1 and event.type == KEYDOWN and event.key == K_x:
             running = 0
     if you_lose == 2:
         you_lose_2_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(you_lose_2_text, you_lose_2_text_position)
+        draw(you_lose_2_text, you_lose_2_text_position)
         if you_lose == 2 and event.type == KEYDOWN and event.key == K_x:
             running = 0
 
@@ -234,7 +207,7 @@ while running:
 
     if you_win == 1:
         you_win_text_position = pygame.Rect(0, 0, 600, 600)
-        screen.blit(you_win_text, you_win_text_position)
+        draw(you_win_text, you_win_text_position)
         if you_win == 1 and event.type == KEYDOWN and event.key == K_x:
             running = 0
 
