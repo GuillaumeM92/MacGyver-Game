@@ -21,5 +21,6 @@ crafted_ether_syringe = 0
 
 j = 0
 k = 0
+
 you_win = 0
 you_lose = 0
