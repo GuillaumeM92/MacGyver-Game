@@ -10,7 +10,6 @@ Good luck!
 # Files
 - main.py contains the main loop that runs the game
 - display.py contains the resolution settings and loads the resources for the game
-- labyrinth_grid.py contains the architecture for generating the walls on top of the background
+- labyrinth_grid.txt contains the architecture for generating the starting and ending point, the background and the walls
 - variables.py contains the game's variables
-- player.py contains the player class and it's movement functions
-- functions.py contains several draw functions
+- classes.py contains the player class and it's movement functions, and the labyrinth class with setup and draw functions, as well as a simple draw function
