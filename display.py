@@ -1,13 +1,9 @@
 # Importing
 import pygame
 from pygame.locals import *
-from variables import *
 
 # Initialize pygame
 pygame.init()
-
-# Enable key holding
-pygame.key.set_repeat(delay, interval)
 
 # Screen_resolution
 screen_width = 600
@@ -19,15 +15,12 @@ screen = pygame.display.set_mode((screen_width, screen_height), FULLSCREEN)
 # Load images (player, sentinel, background, walls, items, texts, inventory)
 player_r = pygame.image.load("macgyver_resources/resource/Characters/MacGyver_R.png").convert_alpha()
 player_l = pygame.image.load("macgyver_resources/resource/Characters/MacGyver_L.png").convert_alpha()
-player_orientation = player_r
 
 player_classy_r = pygame.image.load("macgyver_resources/resource/Characters/Classy_MacGyver_R.png").convert_alpha()
 player_classy_l = pygame.image.load("macgyver_resources/resource/Characters/Classy_MacGyver_L.png").convert_alpha()
-classy_player_orientation = player_classy_r
 
 sentinel_r = pygame.image.load("macgyver_resources/resource/Characters/Sentinel_R.png").convert_alpha()
 sentinel_l = pygame.image.load("macgyver_resources/resource/Characters/Sentinel_L.png").convert_alpha()
-sentinel_orientation = sentinel_l
 
 background_tile = pygame.image.load("macgyver_resources/resource/Background/Background_tile_40x40.png").convert()
 wall_tile = pygame.image.load("macgyver_resources/resource/Background/Wall_tile_40x40.png").convert()
