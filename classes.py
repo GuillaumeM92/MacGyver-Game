@@ -70,8 +70,3 @@ class Labyrinth:
                     screen.blit(finish, (x, y))
                 tile_number += 1
             row_number += 1
-
-
-# Draw function
-def draw(item, position):
-    screen.blit(item, position)
